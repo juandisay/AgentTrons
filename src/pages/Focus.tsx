@@ -106,6 +106,25 @@ export const Focus = () => {
       }
   };
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const key = e.code || e.key;
+      if ((key === 'Space' || key === ' ') && !e.repeat) {
+        const target = e.target as HTMLElement | null;
+        const isEditable = !!target && (
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          (target as HTMLElement).isContentEditable
+        );
+        if (isEditable) return;
+        e.preventDefault();
+        toggleTimer();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [toggleTimer]);
+
   // Format seconds to MM:SS
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
